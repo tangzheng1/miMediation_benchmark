@@ -115,11 +115,9 @@ summarize_global_results <- function(
   ))
 }
 
-load("global_long.RData")
-load("global_summary.RData")
-global_test_long <- df_long
-global_test_summary <- df_summary
-
+load("global_test_long.RData")
+load("global_test_summary.RData")
+                    
 global_benchmark_methods <- c("LDM", "CMM", "MedTest", "MODIMA", "permanovaFL")
 
 ######## Figure ########

@@ -1,0 +1,30 @@
+# Microbiome Mediation Simulation
+# global test
+
+container_image = docker://edward829/mediationldm:latest
+universe = container
+
+# Executable script
+executable = run_global_test.sh
+arguments = $(template) $(n) $(p) $(num1_A) $(num1_B) $(num2) $(d) $(seed)
+
+# Transfer input files 
+transfer_input_files = global_test.R, run_global_test.sh, GALAXYMicrobLiver_study.RData, LDM_fun.R, MODIMA.R, MedTest.R
+
+# Log files with unique names
+log    = logs/global_$(template)_n$(n)_p$(p)_A$(num1_A)_B$(num1_B)_num2_$(num2)_d$(d)_s$(seed).log
+output = output/global_$(template)_n$(n)_p$(p)_A$(num1_A)_B$(num1_B)_num2_$(num2)_d$(d)_s$(seed).out
+error  = logs/global_$(template)_n$(n)_p$(p)_A$(num1_A)_B$(num1_B)_num2_$(num2)_d$(d)_s$(seed).err
+
+# Resource requirements
+request_cpus = 1
+request_memory = 25GB
+request_disk = 2GB
+
+# File transfer settings
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+max_idle = 2000
+
+# Queue all job combinations
+queue template, n, p, num1_A, num1_B, num2, d, seed from taxon_level_arguments.txt

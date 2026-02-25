@@ -55,10 +55,10 @@ We designed four distinct null settings to test if methods can suppress false po
 - **Complete Null**: No taxa are associated with either the exposure or the outcome.
 - **Exposure-only**: Taxa are associated only with the exposure.
 - **Outcome-only**: Taxa are associated only with the outcome.
-- **Disjoint8 Null**: Both paths are present (10 taxa each), but they occur in completely different, non-overlapping taxa sets. 
+- **Disjoint Null**: Both paths are present (10 taxa each), but they occur in completely different, non-overlapping taxa sets. 
 
-3. FDR and Power Evaluation (True Mediation)
+2. FDR and Power Evaluation (True Mediation)
 
-- **True Mediatio**n: A specific subset of taxa acts as valid mediators by having nonzero AA association effects on both paths (i.e., overlap exists between the two 10-taxa sets). We varied the number of true mediators (**overlap size** $num2 \in{3,5,7,9}$).
+- **True Mediatio**: A specific subset of taxa acts as valid mediators by having nonzero AA association effects on both paths (i.e., overlap exists between the two 10-taxa sets). We varied the number of true mediators (**overlap size** $num2 \in{3,5,7,9}$).
 
 ## 🧐 Real Data Analysis

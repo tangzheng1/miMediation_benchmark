@@ -39,7 +39,28 @@ We designed four distinct null settings to test if methods can suppress false po
 
 ## 🏃 Reproduction Steps
 
-The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations are located in `simulations/code/` folder. The simulations in our paper were executed through High Throughput Computing (HTC) environments, so we also provide the corresponding CHTC submission scripts in the `simulations/CHTC/` folder.
+The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations are located in `simulations/code/` folder. 
+
+```{r}
+## Example for taxon level test
+kk <- runone_simulation(
+  n = 200, 
+  p = 200, 
+  num1_A = 10, 
+  num1_B = 10, 
+  num2 = 7,
+  beta_treat = log(5), 
+  beta_outcome = 1, 
+  d = 0.5,
+  template = "GALAXYMicrobLiver_study",
+  template_dir = ".",
+  save_dir = ".",
+  seed = 1
+)
+kk
+```
+
+The simulations in our paper were executed through High Throughput Computing (HTC) environments, so we also provide the corresponding CHTC submission scripts in the `simulations/CHTC/` folder.
 
 For each simulation, you can get a RDS file named as "template_%s_n_%d_p%d_d%s_num1A_%d_num1B_%d_num2_%d_seed_%d.rds". The RDS files from taxon level simulations contain the index of true mediators, q-value matrix and running time for different methods. The RDS files from global test simulations contain the global p-values and running time for different methods. 
 

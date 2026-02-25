@@ -25,7 +25,7 @@ The details of this package can be seen in our package website https://github.co
 
 Figure 1 in our paper are used to illustrate thatthe commonly used pseudo-AA construction (multiplying relative abundance by an independent, permuted microbial load) fails to reproduce key features of real absolute abundance (AA) data.
 
-The datasets (`GALAXY_mOTUs_v25.tsv`, `GALAXY_load.tsv`) used to generate Figure 1 and construct the AA templates were downloaded from Zenodo Record 14280080 (https://zenodo.org/records/14280080). You can run the script located in figure1_illustration/figure1.R. to reproduce the plot.
+The datasets (`GALAXY_mOTUs_v25.tsv`, `GALAXY_load.tsv`) used to generate Figure 1 and construct the AA templates were downloaded from Zenodo Record 14280080 (https://zenodo.org/records/14280080). You can run the script located in `figure1_illustration/figure1.R` to reproduce the plot.
 
 ## 📉 Simulation Study
 

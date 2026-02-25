@@ -24,8 +24,8 @@ The details of this package can be seen in https://github.com/tangzheng1/miMedia
 ## 📊 Simulation Study
 
 We employed a template-based resampling approach grounded in the real AA data from the GALAXY dataset.(The template RData can be found in the data folder.)
-Input Generation: We simulate true absolute abundances (AA) that preserve real-world sparsity, overdispersion, and taxon-taxon dependence. These are then converted to relative abundance (RA) count matrices, which serve as the standard input for all competing methods.
-Causal Scenarios: We evaluate the false discovery rate (FDR) and power of difference methods across various configurations:
+
+We evaluate the false discovery rate (FDR) and power of different methods across various configurations:
 
 - n (sample size): 200/400/800
 - p (dimensionality): 200/400
@@ -36,6 +36,7 @@ under carefully designed scenarios:
 - Exposure-only: Taxa are associated with only exposure (no true mediators).
 - Outcome-only: Taxa are associated with only outcome (no true mediators).
 - Disjoint Null: Some taxa are affected by the exposure, and different taxa affect the outcome, but there is zero overlap. This is a highly challenging scenario where existing methods often exhibit severe false positive inflation.
-- True Mediation: A specific subset of taxa acts as valid mediators (overlap exists).
+- True Mediation: A specific subset of taxa acts as valid mediators (overlap exists). We also have 3 overlapping settings:
+  - num2 (number of true mediators): 3/5/7
 
 ## 🧐 Real Data Analysis

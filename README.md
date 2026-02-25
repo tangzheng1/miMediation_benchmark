@@ -62,6 +62,8 @@ We designed four distinct null settings to test if methods can suppress false po
 
 ### 🏃 Reproduction Steps
 
-The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations on the UW-Madison CHTC cluster are located in `simulations/code/` folder. For each simulation, you can get a RDS file named as "template_%s_n_%d_p%d_d%s_num1A_%d_num1B_%d_num2_%d_seed_%d.rds". After having all rds files, you can use the R scripts (`taxon_level_summary.R` and `global_test_summary.R`) located in `simulations/code/` folder to summarize the data, making plots and summary tables. 
+The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations on the UW-Madison CHTC cluster are located in `simulations/code/` folder. For each simulation, you can get a RDS file named as "template_%s_n_%d_p%d_d%s_num1A_%d_num1B_%d_num2_%d_seed_%d.rds". 
+
+After having all rds files, you can use the R scripts (`taxon_level_summary.R` and `global_test_summary.R`) located in `simulations/code/` folder to summarize the data, making plots and summary tables. 
 
 ## 🧐 Real Data Analysis

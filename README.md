@@ -1,4 +1,4 @@
-# Reproducibility Archive for Error control for microbiome mediator discovery: benchmark and remedy
+# Reproducing Code and Data for: "Error control for microbiome mediator discovery: benchmark and remedy"
 
 ## 📖 Overview
 

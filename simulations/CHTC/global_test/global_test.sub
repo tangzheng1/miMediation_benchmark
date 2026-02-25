@@ -27,4 +27,4 @@ when_to_transfer_output = ON_EXIT
 max_idle = 2000
 
 # Queue all job combinations
-queue template, n, p, num1_A, num1_B, num2, d, seed from taxon_level_arguments.txt
+queue template, n, p, num1_A, num1_B, num2, d, seed from arguments.txt

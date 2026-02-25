@@ -9,7 +9,7 @@ executable = run_global_test.sh
 arguments = $(template) $(n) $(p) $(num1_A) $(num1_B) $(num2) $(d) $(seed)
 
 # Transfer input files 
-transfer_input_files = global_test.R, run_global_test.sh, GALAXYMicrobLiver_study.RData, LDM_fun.R, MODIMA.R, MedTest.R
+transfer_input_files = global_test_chtc.R, run_global_test.sh, GALAXYMicrobLiver_study.RData, LDM_fun.R, MODIMA.R, MedTest.R
 
 # Log files with unique names
 log    = logs/global_$(template)_n$(n)_p$(p)_A$(num1_A)_B$(num1_B)_num2_$(num2)_d$(d)_s$(seed).log

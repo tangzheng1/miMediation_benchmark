@@ -19,7 +19,7 @@ To run the scripts in this repository, you first need to install the `miMediatio
 # Install the miMediation package
 devtools::install_github("tangzheng1/miMediation")
 ```
-The details of this package can be seen in https://github.com/tangzheng1/miMediation.
+The details of this package can be seen in our package website https://github.com/tangzheng1/miMediation.
 
 ## 📊 Simulation Study
 
@@ -40,7 +40,7 @@ Methods Evaluated: CMM, LDM-med, MedTest, MODIMA, and PERMANOVA-med.
 
 ### ⚙️ Simulation Settings
 
-We employed a template-based resampling approach grounded in the real Absolute Abundance (AA) data from the GALAXY/MicrobLiver cohort (the template .RData can be found in the data/ folder). 
+We employed a template-based resampling approach grounded in the real Absolute Abundance (AA) data from the GALAXY/MicrobLiver cohort (the template data `GALAXYMicrobLiver_study.RData` can be found in the `data/` folder). 
 
 To systematically evaluate the methods, we generated 500 simulated datasets per scenario and varied the following key configurations:
 
@@ -64,6 +64,6 @@ We designed four distinct null settings to test if methods can suppress false po
 
 ### 🏃 Reproduction Steps
 
-The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations on the UW-Madison CHTC cluster are located in simulations/code/ folder. For each simulation, you can get a RDS file named as "template_%s_n_%d_p%d_d%s_num1A_%d_num1B_%d_num2_%d_seed_%d.rds". After having all rds files, you can use the R scripts (`taxon_level_summary.R` and `global_test_summary.R`) located in simulations/code/ folder to summarize the data, making plots and summary tables. 
+The R scripts (`taxon_level_simulation.R` and `global_test_simulation.R`) used to run the simulations on the UW-Madison CHTC cluster are located in `simulations/code/` folder. For each simulation, you can get a RDS file named as "template_%s_n_%d_p%d_d%s_num1A_%d_num1B_%d_num2_%d_seed_%d.rds". After having all rds files, you can use the R scripts (`taxon_level_summary.R` and `global_test_summary.R`) located in `simulations/code/` folder to summarize the data, making plots and summary tables. 
 
 ## 🧐 Real Data Analysis

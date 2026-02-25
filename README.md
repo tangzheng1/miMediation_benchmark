@@ -21,7 +21,7 @@ To run the scripts in this repository, you first need to install the `miMediatio
 # Install the miMediation package
 devtools::install_github("tangzheng1/miMediation")
 ```
-The details of this package is contained in https://github.com/tangzheng1/miMediation.
+The details of this package can be seen in https://github.com/tangzheng1/miMediation.
 
 ## 📊 Simulation Study
 

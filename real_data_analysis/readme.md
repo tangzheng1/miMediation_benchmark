@@ -1,5 +1,5 @@
 # Real Data Analysis
-This module contains the data processing pipeline and analysis scripts to investigate whether microbial taxa mediate the association between country of origin (United States vs. China) and body mass index (BMI)
+This module contains the data processing pipeline and analysis scripts to investigate whether microbial taxa mediate the association between country of origin (United States vs. China) and body mass index (BMI).
 
 ## 🔧 Data Preprocessing
 The raw metagenomic data is pulled from the `curatedMetagenomicData` R package. To ensure a rigorous causal evaluation and reduce confounding in cross-country comparisons, the study population is constructed in three stages:

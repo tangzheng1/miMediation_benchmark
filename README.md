@@ -24,7 +24,7 @@ The subfolder `real_data_analysis\` contains
 
 Executing these scripts can reproduce the results described in our paper under "Results – Gut microbiome mediation of between-country differences in BMI".
 
-The subfolder `figures_and_tables\` contains the R scripts for reproducing all the figures and tables in our paper and supplementary information, including Figure 1-5, Figure S1-S5, and Table S1-S4. 
+The subfolder `figures_and_tables\` contains the R scripts for reproducing all the figures and tables in our paper and supplementary information, including Figure 1-5, Figure S2-S5, and Table S1-S4. 
 
 ## Reference
 Wang Q, Li Y, Peng Y, Tang, ZZ (2026). *Error control in microbiome mediator discovery: benchmark and remedy*. Submitted

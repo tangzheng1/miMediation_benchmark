@@ -4,7 +4,18 @@ library(tidyverse)
 library(ggplot2)
 library(patchwork)
 
-
+my_colors <- c(
+  "CAMRA"      = "red",
+  "LDM-med"    = "blue",  
+  "microHIMA"  = "grey60",  
+  "MarZIC"     = "green",  
+  "multimedia" = "yellow", 
+  "CRAmed"     = "orange",  
+  "CMM"        = "darkgreen",
+  "PERMANOVA-med" = "purple",
+  "MODIMA"     = "pink",
+  "MedTest"    = "skyblue"
+)
 
 target_levels <- c(
   "Complete Null",

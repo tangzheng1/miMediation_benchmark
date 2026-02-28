@@ -12,9 +12,19 @@ To address this, our paper presents:
 
 This repository contains the data, code, and instructions necessary to reproduce all figures, tables, and numerical results presented in our paper “Error control in microbiome mediator discovery: benchmark and remedy” by Qiyu Wang, Yiluan Li, Yunfei Peng, and Zheng-Zheng Tang.
 
-The subfolder `data/` contains the template data `.RData` for simulation and the cleaned data `real_data.RData` for real data analysis.
+The subfolder `data/` contains:
+- The template dataset `GALAXYMicrobLiver_study.RData`, which is used to generate simulated datasets under various experimental settings.
+- The processed dataset `real_data.RData`, which is used for the real data analysis presented in our paper.
 
-The subfolder `simulations/` contains the simulation R codes and submission scripts for high throught computing, and the R codes for aggregating the simulation outputs.
+The subfolder `simulations/` contains the simulation R codes and submission scripts for high throught computing, and the R scripts for aggregating and summarizing the simulation outputs.
+
+The subfolder `real_data_analysis\` contains 
+- `read_data.R`: R script for cleaning and preprocessing the raw microbiome dataset.
+- `data_analysis.R`: R script for performing the mediation analysis on the cleaned dataset.
+
+Executing these scripts can reproduce the results described in our paper under "Results – Gut microbiome mediation of between-country differences in BMI".
+
+The subfolder `figures and tables` contains the R scripts for reproducing all the figures and tables in our paper and supplementary information, including Figure 1~5, Figure S1~S5, and Table S1~S4. 
 
 ## Reference
 Wang Q, Li Y, Peng Y, Tang, ZZ (2026). *Error control in microbiome mediator discovery: benchmark and remedy*. Submitted

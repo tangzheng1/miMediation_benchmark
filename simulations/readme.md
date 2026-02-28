@@ -35,7 +35,7 @@ We designed four distinct null settings to test if methods can suppress false po
 
 2. **FDR and Power Evaluation (True Mediation)**
 
-- **True Mediation**: A specific subset of taxa acts as valid mediators by having nonzero AA association effects on both paths (i.e., overlap exists between the two 10-taxa sets). We varied the number of true mediators (**overlap size** num2 = 3/5/7/9).
+- **True Mediation**: A specific subset of taxa acts as valid mediators by having nonzero AA association effects on both paths (i.e., overlap exists between the two 10-taxa sets). We varied the number of true mediators (overlap size num2 = 3/5/7/9).
 
 ## 🏃 Reproduction Steps
 

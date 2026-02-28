@@ -5,13 +5,13 @@ library(ggplot2)
 library(patchwork)
 
 my_colors <- c(
-  "CAMRA"      = "red",
+  "CAMRA"      = "red",  
   "LDM-med"    = "blue",  
   "microHIMA"  = "grey60",  
   "MarZIC"     = "green",  
   "multimedia" = "yellow", 
   "CRAmed"     = "orange",  
-  "CMM"        = "darkgreen",
+  "CMM"        = "#7FC97F",
   "PERMANOVA-med" = "purple",
   "MODIMA"     = "pink",
   "MedTest"    = "skyblue"
@@ -21,8 +21,8 @@ target_levels <- c(
   "Complete Null",
   "Exposure-only",
   "Outcome-only",
-  "Disjoint (Balanced)",
-  "Disjoint (Imbalanced)"
+  "Disjoint (Balanced +/-)",
+  "Disjoint (Dominant +)"
 )
 
 ######## Figure ########
@@ -70,6 +70,7 @@ draw_plot3 <- function(qq_data, p_val) {
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 4))) +
     scale_x_continuous(limits = c(0, NA), expand = c(0.05, 0)) +
     scale_y_continuous(limits = c(0, 5), expand = c(0.05, 0)) +
+    scale_color_manual(values = my_colors)+
     theme_bw() +
     theme(
       panel.grid = element_blank(),
@@ -94,22 +95,20 @@ final_fig3 <- draw_plot3(plot3_qq_data, p_val = 200)
 ###### FigS3 Quantile-quantile plots of p-values from global mediation tests when p = 400 ######
 
 plotS3_qq_data <- plot3_data(global_test_long, target_p = 400)
-final_S3 <- draw_plot3(plot3_qq_data, p_val = 400)
+final_S3 <- draw_plot3(plotS3_qq_data, p_val = 400)
 
 ######## Table ########
 ###### Table S2 Empirical Type I error rates for global mediation tests across mediation-null simulation settings ######
 
-global_test_summary <- global_res$summary
 table_s2_data <- global_test_summary %>%
   filter(num2 == 0) %>% # mediation null
-  filter(method %in% global_benchmark_methods) %>%
   mutate(
     Scenario = case_when(
       num1A == 0  & num1B == 0  ~ "Complete Null",
       num1A == 10 & num1B == 0  ~ "Exposure-only",
       num1A == 0  & num1B == 10 ~ "Outcome-only",
-      num1A == 10 & num1B == 10 & d == 0.5 ~ "Disjoint (Balanced)",
-      num1A == 10 & num1B == 10 & d == 0.9 ~ "Disjoint (Imbalanced)"
+      num1A == 10 & num1B == 10 & d == 0.5 ~ "Disjoint (Balanced +/-)",
+      num1A == 10 & num1B == 10 & d == 0.9 ~ "Disjoint (Dominant +)"
     )) %>%
   mutate(
     Scenario = factor(Scenario, levels = target_levels)
@@ -125,7 +124,7 @@ table_s2_final <- table_s2_data %>%
   dplyr::select(Scenario, p, n, everything())
 
 ###### Table S3 Computation time across various dataset dimensions ######
-tbl_runtime_raw <- global_res$long_data %>%
+tbl_runtime_raw <- global_test_long %>%
   group_by(method, n, p) %>%
   summarise(
     med = median(runtime_sec, na.rm = TRUE),

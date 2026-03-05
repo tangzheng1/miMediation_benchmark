@@ -27,5 +27,5 @@ Executing these scripts can reproduce the results described in our paper under "
 The subfolder `figures_and_tables/` contains the R scripts for reproducing the figures and tables in our paper and supplementary information, including Figure 2-6, Figure S1-S4, and Table S2-S4. 
 
 ## Reference
-Wang Q, Li Y, Peng Y, Tang ZZ (2026). *Error control in microbiome mediator discovery: benchmarking and remedy*. Submitted
+Wang Q, Li Y, Peng Y, Tang ZZ (2026). *Error control for microbiome mediator discovery: benchmarking and remedy*. Submitted
 

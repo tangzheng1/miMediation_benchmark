@@ -110,7 +110,7 @@ pal_bw_group <- function(levels) {
 }
 
 # =============================================================================
-# fig5c_prevalence — Prevalence bar plots (Treatment & Outcome sides)
+# fig6c_prevalence — Prevalence bar plots (Treatment & Outcome sides)
 # =============================================================================
 # Requires: count1, treat1, y1, idx_PRO, otu_PRO
 # Outputs:  figure/treat_prev.png, figure/bw_median_prev.png
@@ -211,7 +211,7 @@ ggsave("figure/bw_median_prev.png", p_prev_bw,
 message("Done: prevalence plots saved.")
                  
 # =============================================================================
-# fig5c_abundance — Abundance violin + box plots (Treatment & Outcome)
+# fig6c_abundance — Abundance violin + box plots (Treatment & Outcome)
 # =============================================================================
 # Requires: count1, treat1, y1, idx_PRO, meta_treat, meta_bw 
 # Outputs:  figure/treat_compare.png, figure/median_outcome_compare.png
@@ -305,13 +305,13 @@ ggsave("figure/median_outcome_compare.png", p_abund_bw,
 message("Done: abundance plots saved.")
 
 # =============================================================================
-# fig5a_upset — UpSet plot comparing selected taxa across methods
+# fig6a_upset — UpSet plot comparing selected taxa across methods
 # =============================================================================
 # Requires: otu_PRO, otu_LDM, otu_hima1, otu_CRA, otu_multimedia, otu_Mar
 # Outputs:  figure/upset.png
 
 # --------------------------------------------------------------------------- #
-#  UpSet plotting function                                                     #
+#  UpSet plotting function                                                    #
 # --------------------------------------------------------------------------- #
 plot_taxa_upset <- function(taxa_sets,
                             highlight_set    = "CAMRA",
@@ -436,7 +436,7 @@ ggsave("figure/upset.png", p_upset,
 message("Done: UpSet plot saved.")
 
 # =============================================================================
-# fig5b_volcano — Volcano plots for CAMRA and LDM-med
+# fig6b_volcano — Volcano plots for CAMRA and LDM-med
 # =============================================================================
 # Requires: selected_values1/2, PRO_beta, idx_PRO,
 #           p_LDM, LDM_beta, idx_LDM

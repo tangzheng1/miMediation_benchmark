@@ -1,4 +1,4 @@
-# Error control for microbiome mediator discovery: benchmark and remedy.
+# Error control for microbiome mediator discovery: benchmarking and remedy.
 
 ## Overview
 

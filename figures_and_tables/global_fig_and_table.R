@@ -26,7 +26,7 @@ target_levels <- c(
 )
 
 ######## Figure ########
-###### Fig3 Quantile-quantile plots of p-values from global mediation tests when p = 200 ######
+###### Fig4 Quantile-quantile plots of p-values from global mediation tests when p = 200 ######
 
 plot3_data <- function(long_data, target_p = 200) {
   df <- long_data 
@@ -92,7 +92,7 @@ plot3_qq_data <- plot3_data(global_test_long, target_p = 200)
 final_fig3 <- draw_plot3(plot3_qq_data, p_val = 200)
 
 
-###### FigS3 Quantile-quantile plots of p-values from global mediation tests when p = 400 ######
+###### FigS2 Quantile-quantile plots of p-values from global mediation tests when p = 400 ######
 
 plotS3_qq_data <- plot3_data(global_test_long, target_p = 400)
 final_S3 <- draw_plot3(plotS3_qq_data, p_val = 400)

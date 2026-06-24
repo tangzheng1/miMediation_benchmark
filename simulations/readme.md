@@ -19,7 +19,7 @@ We employed a template-based resampling approach grounded in the real Absolute A
 
 To systematically evaluate the methods, we generated 500 simulated datasets per scenario and varied the following key configurations:
 
-- **Data Dimensions**: Sample sizes (n=200/400/800) and microbiome feature sizes (p=200/400).
+- **Data Dimensions**: Sample sizes (n=200/400/800) and microbiome feature sizes (p=200/400). To further evaluate performance under more challenging small-$n$, large-$p$ regimes with more lower-prevalence features, we conducted an additional stress-test simulation with p = 800 taxa and n = 100 or n = 200 samples.
 - **Effect Direction Balance**: Balancing factor (d=0.5/0.9). When both exposure and outcome associations were present, we evaluated scenarios with Balanced +/- signs (50% positive/negative) and Dominant + signs (90% positive/10% negative) to assess the impact of compositional distortion.
   
 We designed carefully controlled causal scenarios by assigning exposure- and outcome-associations to specific subsets of taxa (fixed at 10 taxa per path when nonempty):

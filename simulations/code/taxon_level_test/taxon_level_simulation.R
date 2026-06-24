@@ -965,84 +965,121 @@ CAMRA <- function(count_m, treat_cov, y,
                   pre_filter = FALSE,
                   CClasso = FALSE,
                   cov_true = NULL,
+                  method = c("hdmt", "sbmh"),
                   seed = 42) {
+  
   set.seed(seed)
+  method <- match.arg(method)
   t0 <- proc.time()[["elapsed"]]
   
   select_otu <- seq_len(ncol(count_m))
   
-  # Optional pre-filtering
   if (pre_filter) {
     select_otu <- pre_filter_fun(
-      count_matrix = count_m, treat_cov = treat_cov, y = y,
-      const = 2, seed = seed, sudo = sudo, cov_ad = cov_ad
+      count_matrix = count_m,
+      treat_cov    = treat_cov,
+      y            = y,
+      const        = 2,
+      seed         = seed,
+      sudo         = sudo,
+      cov_ad       = cov_ad
     )
+    
+    select_otu <- sort(unique(select_otu))
+    select_otu <- select_otu[select_otu >= 1 & select_otu <= ncol(count_m)]
   }
   
-  # Step 1: Exposure -> Microbiome (PALM)
-  res1 <- recover_l_PALM(count_m, treat_cov, cov_ad = cov_ad)
+  res1 <- recover_l_PALM(
+    count_m,
+    treat_cov,
+    cov_ad = cov_ad
+  )
   
-  # Step 2: Microbiome -> Outcome (PALAR + de-biased Lasso)
-  res2 <- recover_r(count_m, treat_cov, y,
-                    cov_ad = cov_ad, CClasso = CClasso,
-                    cov_true = cov_true, sudo = sudo)
+  res2 <- recover_r(
+    count_m,
+    treat_cov,
+    y,
+    cov_ad   = cov_ad,
+    CClasso  = CClasso,
+    cov_true = cov_true,
+    sudo     = sudo
+  )
   
   p1 <- res1$p
   p2 <- res2$p
+  
   p_matrix <- cbind(p1, p2)
+
+  p_vec_all <- rep(1, length(p1))
+  idx_detected <- integer(0)
+  globalp.perm <- NA_real_
   
-  # Mixture-null raw mediation p-values
-  rawp.perm <- p_mediation_maxp(p1, p2, pi_method = "cp4p",
-                                weight_method = "product")
-  p_vec <- p.adjust(rawp.perm, method = "BH")
-  
-  # Global mediation p-value via harmonic mean
-  rawp.perm.rm <- na.omit(rawp.perm)
-  L <- length(rawp.perm.rm)
-  rawp.perm.rm[rawp.perm.rm < 1e-8] <- 1e-8
-  globalp.perm <- harmonicmeanp::p.hmp(rawp.perm.rm, w = rep(1 / L, L), L = L)
-  
-  p_vec_all <- p_vec
-  
-  # Handle pre-filtered case
-  if (pre_filter) {
-    p_vec_f <- p.adjust(rawp.perm[select_otu], method = "BH")
-    p_vec_all[select_otu] <- p_vec_f
-    p_vec_all[-select_otu] <- 1
+  if (length(select_otu) == 0) {
+    
+    idx_detected <- integer(0)
+    globalp.perm <- NA_real_
+    
+  } else if (method == "hdmt") {
+    
+    tmp_q <- try(
+      p_mediation_hdmt_fdr(
+        p_matrix[select_otu, 1],
+        p_matrix[select_otu, 2],
+        exact_p = 0
+      ),
+      silent = TRUE
+    )
+    
+    if (inherits(tmp_q, "try-error")) {
+      p_vec_all[select_otu] <- NA_real_
+      idx_detected <- integer(0)
+      globalp.perm <- NA_real_
+    } else {
+      p_vec_all[select_otu] <- as.numeric(tmp_q)
+      idx_sub <- which(tmp_q <= FDR_level)
+      idx_detected <- select_otu[idx_sub]
+      globalp.perm <- min(p_vec_all, na.rm = TRUE)
+    }
+    
+  } else if (method == "sbmh") {
+    
+    tmp_q <- try(
+      MultiMed::medTest.SBMH(
+        p_matrix[select_otu, 1],
+        p_matrix[select_otu, 2],
+        MCP.type = "FDR",
+        t1 = FDR_level / 2,
+        t2 = FDR_level / 2
+      ),
+      silent = TRUE
+    )
+    
+    if (inherits(tmp_q, "try-error")) {
+      p_vec_all[select_otu] <- NA_real_
+      idx_detected <- integer(0)
+      globalp.perm <- NA_real_
+    } else {
+      p_vec_all[select_otu] <- as.numeric(tmp_q)
+      idx_sub <- which(tmp_q <= FDR_level)
+      idx_detected <- select_otu[idx_sub]
+      globalp.perm <- min(p_vec_all, na.rm = TRUE)
+    }
   }
-  
-  # Step 3: HDMT-based FDR estimation (with fallback)
-  tmp_locfdr <- try(
-    p_mediation_hdmt_fdr(p_matrix[select_otu, 1],
-                         p_matrix[select_otu, 2],
-                         exact_p = 0),
-    silent = TRUE
-  )
-  
-  if (inherits(tmp_locfdr, "try-error")) {
-    # Fallback to conservative BH-based approach
-    idx_detected <- which(p_vec_all < FDR_level)
-  } else {
-    p_vec_all[select_otu] <- tmp_locfdr
-    idx_sub <- which(tmp_locfdr <= FDR_level)
-    idx_detected <- select_otu[idx_sub]
-  }
-  
-  # Global p-value: minimum q-value
-  globalp.perm <- min(p_vec_all, na.rm = TRUE)
   
   runtime_sec <- as.numeric(proc.time()[["elapsed"]] - t0)
   
-  list(
-    idx_detected = idx_detected,
-    fdr_value    = p_vec_all,
-    runtime_sec  = runtime_sec,
-    global_p     = globalp.perm,
-    beta_l       = res1$beta_l,
-    beta_r       = res2$beta_r,
+  return(list(
+    idx_detected  = idx_detected,
+    fdr_value     = p_vec_all,
+    runtime_sec   = runtime_sec,
+    global_p      = globalp.perm,
+    beta_l        = res1$beta_l,
+    beta_r        = res2$beta_r,
     taxa_detected = colnames(count_m)[idx_detected],
-    p_matrix     = p_matrix
-  )
+    p_matrix      = p_matrix,
+    p_left        = p1,
+    p_right       = p2
+  ))
 }
 
 
@@ -1647,7 +1684,8 @@ runone_simulation <- function(
     invisible(NULL)
   }
   
-  run_one_method("CAMRA",      quote(CAMRA(count_m, treat_cov, y, CClasso = FALSE)))
+  run_one_method("CAMRA-HDMT",  quote(CAMRA(count_m, treat_cov, y, CClasso = FALSE, method = "hdmt")))
+  run_one_method("CAMRA-SBMH",  quote(CAMRA(count_m, treat_cov, y, CClasso = FALSE, method = "sbmh")))
   run_one_method("HIMA",       quote(HIMA_micro_sim1(count_m, treat_cov, y)))
   run_one_method("LDM",        quote(ldm_sim(count_m, treat_cov, y)))
   run_one_method("MarZIC",     quote(Mar_sim(count_m, treat_cov, y)))

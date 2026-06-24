@@ -320,9 +320,135 @@ Medtest_sim <- function(count_m, treat_cov, y,
        p_each = setNames(as.numeric(rslt$margPs), names(m.list)), fit = rslt)
 }
 
+##############################################################################
+# SECTION 3: CAMRA
+##############################################################################
+CAMRA <- function(count_m, treat_cov, y,
+                  sudo = 0.5, cov_ad = NULL,
+                  FDR_level = 0.05,
+                  pre_filter = FALSE,
+                  CClasso = FALSE,
+                  cov_true = NULL,
+                  method = c("hdmt", "sbmh"),
+                  seed = 42) {
+  
+  set.seed(seed)
+  method <- match.arg(method)
+  t0 <- proc.time()[["elapsed"]]
+  
+  select_otu <- seq_len(ncol(count_m))
+  
+  if (pre_filter) {
+    select_otu <- pre_filter_fun(
+      count_matrix = count_m,
+      treat_cov    = treat_cov,
+      y            = y,
+      const        = 2,
+      seed         = seed,
+      sudo         = sudo,
+      cov_ad       = cov_ad
+    )
+    
+    select_otu <- sort(unique(select_otu))
+    select_otu <- select_otu[select_otu >= 1 & select_otu <= ncol(count_m)]
+  }
+  
+  res1 <- recover_l_PALM(
+    count_m,
+    treat_cov,
+    cov_ad = cov_ad
+  )
+  
+  res2 <- recover_r(
+    count_m,
+    treat_cov,
+    y,
+    cov_ad   = cov_ad,
+    CClasso  = CClasso,
+    cov_true = cov_true,
+    sudo     = sudo
+  )
+  
+  p1 <- res1$p
+  p2 <- res2$p
+  
+  p_matrix <- cbind(p1, p2)
+
+  p_vec_all <- rep(1, length(p1))
+  idx_detected <- integer(0)
+  globalp.perm <- NA_real_
+  
+  if (length(select_otu) == 0) {
+    
+    idx_detected <- integer(0)
+    globalp.perm <- NA_real_
+    
+  } else if (method == "hdmt") {
+    
+    tmp_q <- try(
+      p_mediation_hdmt_fdr(
+        p_matrix[select_otu, 1],
+        p_matrix[select_otu, 2],
+        exact_p = 0
+      ),
+      silent = TRUE
+    )
+    
+    if (inherits(tmp_q, "try-error")) {
+      p_vec_all[select_otu] <- NA_real_
+      idx_detected <- integer(0)
+      globalp.perm <- NA_real_
+    } else {
+      p_vec_all[select_otu] <- as.numeric(tmp_q)
+      idx_sub <- which(tmp_q <= FDR_level)
+      idx_detected <- select_otu[idx_sub]
+      globalp.perm <- min(p_vec_all, na.rm = TRUE)
+    }
+    
+  } else if (method == "sbmh") {
+    
+    tmp_q <- try(
+      MultiMed::medTest.SBMH(
+        p_matrix[select_otu, 1],
+        p_matrix[select_otu, 2],
+        MCP.type = "FDR",
+        t1 = FDR_level / 2,
+        t2 = FDR_level / 2
+      ),
+      silent = TRUE
+    )
+    
+    if (inherits(tmp_q, "try-error")) {
+      p_vec_all[select_otu] <- NA_real_
+      idx_detected <- integer(0)
+      globalp.perm <- NA_real_
+    } else {
+      p_vec_all[select_otu] <- as.numeric(tmp_q)
+      idx_sub <- which(tmp_q <= FDR_level)
+      idx_detected <- select_otu[idx_sub]
+      globalp.perm <- min(p_vec_all, na.rm = TRUE)
+    }
+  }
+  
+  runtime_sec <- as.numeric(proc.time()[["elapsed"]] - t0)
+  
+  return(list(
+    idx_detected  = idx_detected,
+    fdr_value     = p_vec_all,
+    runtime_sec   = runtime_sec,
+    global_p      = globalp.perm,
+    beta_l        = res1$beta_l,
+    beta_r        = res2$beta_r,
+    taxa_detected = colnames(count_m)[idx_detected],
+    p_matrix      = p_matrix,
+    p_left        = p1,
+    p_right       = p2
+  ))
+}
+
 
 ##############################################################################
-# SECTION 3: Data generation from AA template
+# SECTION 4: Data generation from AA template
 ##############################################################################
 
 generate_data_from_AA <- function(
@@ -416,9 +542,16 @@ generate_data_from_AA <- function(
 
 
 ##############################################################################
-# SECTION 4: Global-level simulation runner
+# SECTION 5: Global-level simulation runner
 ##############################################################################
+CAMRA_HDMT_sim <- function(count_m, treat_cov, y) {
+  CAMRA(count_m, treat_cov, y, CClasso = FALSE, method = "hdmt")
+}
 
+CAMRA_SBMH_sim <- function(count_m, treat_cov, y) {
+  CAMRA(count_m, treat_cov, y, CClasso = FALSE, method = "sbmh")
+}
+                 
 runone_simulation_Global <- function(
     n, p, num1_A, num1_B, num2,
     beta_treat, beta_outcome, d,
@@ -453,21 +586,25 @@ runone_simulation_Global <- function(
   
   # ── Define method set (CMM excluded when p != 200 due to scalability) ──
   if (p == 200) {
-    method_map <- list(
-      LDM         = "ldm_sim",
-      CMM         = "ccmm_sim",
-      permanovaFL = "permanovaFL_sim",
-      MODIMA      = "MODIMA_sim",
-      MedTest     = "Medtest_sim"
-    )
-  } else {
-    method_map <- list(
-      LDM         = "ldm_sim",
-      permanovaFL = "permanovaFL_sim",
-      MODIMA      = "MODIMA_sim",
-      MedTest     = "Medtest_sim"
-    )
-  }
+  method_map <- list(
+    CAMRA_HDMT   = "CAMRA_HDMT_sim",
+    CAMRA_SBMH   = "CAMRA_SBMH_sim",
+    LDM          = "ldm_sim",
+    CMM          = "ccmm_sim",
+    permanovaFL  = "permanovaFL_sim",
+    MODIMA       = "MODIMA_sim",
+    MedTest      = "Medtest_sim"
+  )
+} else {
+  method_map <- list(
+    CAMRA_HDMT   = "CAMRA_HDMT_sim",
+    CAMRA_SBMH   = "CAMRA_SBMH_sim",
+    LDM          = "ldm_sim",
+    permanovaFL  = "permanovaFL_sim",
+    MODIMA       = "MODIMA_sim",
+    MedTest      = "Medtest_sim"
+  )
+}
   
   methods <- names(method_map)
   res_methods <- vector("list", length(methods)); names(res_methods) <- methods

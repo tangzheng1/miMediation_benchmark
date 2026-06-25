@@ -289,7 +289,7 @@ final_S7 <- (p1 /plot_spacer()/ p2) +
 
 ###### Table S2&S4 Empirical any-false-discovery rate for taxon-level mediation tests across mediation-null simulation settings ######
 table_s2_data <-  taxon_level_summary %>%
-  filter(num2 == 0) %>% # mediation null
+  filter(num2 == 0, alpha == 0.05) %>% # mediation null
   mutate(
     Scenario = case_when(
       num1A == 0  & num1B == 0  ~ "Complete Null",
@@ -301,12 +301,12 @@ table_s2_data <-  taxon_level_summary %>%
   mutate(
     Scenario = factor(Scenario, levels = target_levels)
   ) %>%
-  dplyr::select(Scenario, p, n, method, rejection_rate)
+  dplyr::select(Scenario, p, n, method, type1_error)
 
 table_s2_final <- table_s2_data %>%
   pivot_wider(
     names_from = method,
-    values_from = rejection_rate
+    values_from = type1_error
   ) %>%
   arrange(Scenario, p, n) %>%
   dplyr::select(Scenario, p, n, everything())

@@ -14,7 +14,7 @@ This repository contains the data, codes, and instructions necessary to reproduc
 
 The subfolder `data/` contains:
 - The template dataset `GALAXYMicrobLiver_study.RData`, which is used to generate simulated datasets under various experimental settings.
-- The template dataset `GALAXYMicrobLiver_study_p800.RData`, which is used to generate simulated datasets under various experimental settings in small $n$, large $p$ stress-test
+- The template dataset `GALAXYMicrobLiver_study_p800.RData`, which is used to generate simulated datasets under various experimental settings in small-n, large-p stress-test
 simulations.
 - The processed dataset `real_data.RData`, which is used for the real data analysis presented in our paper.
 

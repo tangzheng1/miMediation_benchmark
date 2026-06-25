@@ -5,7 +5,8 @@ library(ggplot2)
 library(patchwork)
 
 my_colors <- c(
-  "CAMRA"      = "red",  
+  "CAMRA-HDMT" = "red",  
+  "CAMRA-SBMH" = "brown",
   "LDM-med"    = "blue",  
   "microHIMA"  = "grey60",  
   "MarZIC"     = "green",  
@@ -92,15 +93,15 @@ plot4_qq_data <- plot4_data(global_test_long, target_p = 200)
 final_fig4 <- draw_plot4(plot4_qq_data, p_val = 200)
 
 
-###### FigS2 Quantile-quantile plots of p-values from global mediation tests when p = 400 ######
+###### FigS3 Quantile-quantile plots of p-values from global mediation tests when p = 400 ######
 
-plotS2_qq_data <- plot4_data(global_test_long, target_p = 400)
-final_S2 <- draw_plot4(plotS4_qq_data, p_val = 400)
+plotS3_qq_data <- plot4_data(global_test_long, target_p = 400)
+final_S3 <- draw_plot4(plotS3_qq_data, p_val = 400)
 
 ######## Table ########
-###### Table S2 Empirical Type I error rates for global mediation tests across mediation-null simulation settings ######
+###### Table S3 Empirical Type I error rates for global mediation tests across mediation-null simulation settings ######
 
-table_s2_data <- global_test_summary %>%
+table_s3_data <- global_test_summary %>%
   filter(num2 == 0) %>% # mediation null
   mutate(
     Scenario = case_when(
@@ -115,7 +116,7 @@ table_s2_data <- global_test_summary %>%
   ) %>%
   dplyr::select(Scenario, p, n, method, rejection_rate)
 
-table_s2_final <- table_s2_data %>%
+table_s3_final <- table_s3_data %>%
   pivot_wider(
     names_from = method,
     values_from = rejection_rate
@@ -123,7 +124,7 @@ table_s2_final <- table_s2_data %>%
   arrange(Scenario, p, n) %>%
   dplyr::select(Scenario, p, n, everything())
 
-###### Table S3 Computation time across various dataset dimensions ######
+###### Table S5 Computation time across various dataset dimensions ######
 tbl_runtime_raw <- global_test_long %>%
   group_by(method, n, p) %>%
   summarise(
@@ -137,6 +138,6 @@ tbl_runtime_raw <- global_test_long %>%
     setting = sprintf("n=%d, p=%d", n, p)
   )
 
-table_s3 <- tbl_runtime_raw %>%
+table_s5 <- tbl_runtime_raw %>%
   select(method, setting, val_str) %>%
   pivot_wider(names_from = setting, values_from = val_str)

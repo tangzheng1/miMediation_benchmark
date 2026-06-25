@@ -925,12 +925,14 @@ source("MedTest.R")
                     FDR_level =0.05,
                     hdmt.exact = 0,
                     screen = FALSE,        #### Prefilter function
+                    method = c("hdmt", "sbmh"), #### method for step C
                     const =2,              #### The number of filter bacteria, const * n/log(n)
                     CClasso = FALSE,       #### if use CClasso to compute correlation,default is Rsparcc
                     seed=42
   )
   {
     set.seed(seed)
+    method <- match.arg(method)
     t0 <- proc.time()[["elapsed"]]
     
     ## Default keep all taxa
@@ -990,49 +992,64 @@ source("MedTest.R")
       p_vec_all[-select_otu] <- 1
     }
     
-    
-    
-    # user-facing option:
-    #   hdmt.exact = 0 (default) means try exact_p = 0 first
-    #   hdmt.exact = 1 means try exact_p = 1 first
-    stopifnot(hdmt.exact %in% c(0, 1))
-    
-    exact_first  <- as.integer(hdmt.exact)          # ensure 0/1
-    exact_second <- 1L - exact_first
-    
-    tmp_locfdr <- try(
-      p_mediation_hdmt_fdr(
-        p_matrix[select_otu, 1],
-        p_matrix[select_otu, 2],
-        exact_p = exact_first
-      ),
-      silent = TRUE
-    )
-    
-    if (inherits(tmp_locfdr, "try-error")) {
-      tmp_locfdr <- try(
+    ## Step C: mediation testing
+    if (method == "hdmt") {
+      
+      stopifnot(hdmt.exact %in% c(0, 1))
+      
+      exact_first  <- as.integer(hdmt.exact)
+      exact_second <- 1L - exact_first
+      
+      tmp_q <- try(
         p_mediation_hdmt_fdr(
           p_matrix[select_otu, 1],
           p_matrix[select_otu, 2],
-          exact_p = exact_second
+          exact_p = exact_first
         ),
         silent = TRUE
       )
-    }
-    
-    
-    
-    ## If HDMT fails, fall back to BH q-values (possibly screened)
-    
-    if (inherits(tmp_locfdr, "try-error")) {
-      selected_values <- p_vec_all
-      idx_detected    <- which(selected_values <FDR_level)  
       
-      locfdr <- rep(NA_real_, length(select_otu))
-    } else {
-      p_vec_all[select_otu] <- tmp_locfdr
-      idx_sub <- which(tmp_locfdr<= FDR_level)
-      idx_detected <- select_otu[idx_sub]
+      if (inherits(tmp_q, "try-error")) {
+        tmp_q <- try(
+          p_mediation_hdmt_fdr(
+            p_matrix[select_otu, 1],
+            p_matrix[select_otu, 2],
+            exact_p = exact_second
+          ),
+          silent = TRUE
+        )
+      }
+      
+      if (inherits(tmp_q, "try-error")) {
+        ## fallback to BH maxP q-values
+        idx_detected <- which(p_vec_all < FDR_level)
+      } else {
+        p_vec_all[select_otu] <- as.numeric(tmp_q)
+        idx_sub <- which(tmp_q <= FDR_level)
+        idx_detected <- select_otu[idx_sub]
+      }
+      
+    } else if (method == "sbmh") {
+      
+      tmp_q <- try(
+        MultiMed::medTest.SBMH(
+          p_matrix[select_otu, 1],
+          p_matrix[select_otu, 2],
+          MCP.type = "FDR",
+          t1 = FDR_level / 2,
+          t2 = FDR_level / 2
+        ),
+        silent = TRUE
+      )
+      
+      if (inherits(tmp_q, "try-error")) {
+        ## fallback to BH maxP q-values
+        idx_detected <- which(p_vec_all < FDR_level)
+      } else {
+        p_vec_all[select_otu] <- as.numeric(tmp_q)
+        idx_sub <- which(tmp_q <= FDR_level)
+        idx_detected <- select_otu[idx_sub]
+      }
     }
     
     
@@ -1045,6 +1062,7 @@ source("MedTest.R")
                 qval.med =p_vec_all,
                 runtime_sec = runtime_sec,
                 global_p = globalp,
+                method =  method, 
                 pval.alpha = p1,
                 pval.beta =p2,
                 beta_l = res1$beta_l,

@@ -2289,6 +2289,7 @@ source("MedTest.R")
                       mediators = count1,  #[,idx_1]
                       screen = FALSE,
                       CClasso = FALSE,
+                      method = "hdmt", 
                       seed = 123)
   
   

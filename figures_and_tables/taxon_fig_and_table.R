@@ -286,7 +286,33 @@ final_S7 <- (p1 /plot_spacer()/ p2) +
   theme(legend.position = "bottom")
 
 ###### Table ######
-###### Table S3 Computation time across various dataset dimensions ######
+
+###### Table S2&S4 Empirical any-false-discovery rate for taxon-level mediation tests across mediation-null simulation settings ######
+table_s2_data <-  taxon_level_summary %>%
+  filter(num2 == 0) %>% # mediation null
+  mutate(
+    Scenario = case_when(
+      num1A == 0  & num1B == 0  ~ "Complete Null",
+      num1A == 10 & num1B == 0  ~ "Exposure-only",
+      num1A == 0  & num1B == 10 ~ "Outcome-only",
+      num1A == 10 & num1B == 10 & d == 0.5 ~ "Disjoint (Balanced +/-)",
+      num1A == 10 & num1B == 10 & d == 0.9 ~ "Disjoint (Dominant +)"
+    )) %>%
+  mutate(
+    Scenario = factor(Scenario, levels = target_levels)
+  ) %>%
+  dplyr::select(Scenario, p, n, method, rejection_rate)
+
+table_s2_final <- table_s2_data %>%
+  pivot_wider(
+    names_from = method,
+    values_from = rejection_rate
+  ) %>%
+  arrange(Scenario, p, n) %>%
+  dplyr::select(Scenario, p, n, everything())
+
+
+###### Table S5 Computation time across various dataset dimensions ######
 
 tbl_runtime_raw <- taxon_level_long %>%
   group_by(method, n, p) %>%
@@ -301,6 +327,6 @@ tbl_runtime_raw <- taxon_level_long %>%
     setting = sprintf("n=%d, p=%d", n, p)
   )
 
-table_s3 <- tbl_runtime_raw %>%
+table_s5 <- tbl_runtime_raw %>%
   select(method, setting, val_str) %>%
   pivot_wider(names_from = setting, values_from = val_str)

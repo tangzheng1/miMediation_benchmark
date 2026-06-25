@@ -6,12 +6,12 @@ We benchmarked nine existing microbiome mediation methods across two distinct in
 1. **Taxon-Level Mediator Discovery**
 
 - **Goal**: Pinpoint individual mediating taxa and evaluate empirical False Discovery Rate (FDR) and discovery power.
-- **Methods Evaluated**: `CAMRA`, `CRAmed`, `LDM-med`, `MarZIC`, `microHIMA`, and `multimedia`.
+- **Methods Evaluated**: `CAMRA-HDMT`, `CAMRA-SBMH`, `CRAmed`, `LDM-med`, `MarZIC`, `microHIMA`, and `multimedia`.
 
 2. **Global Community Mediation Testing**
 
 - **Goal**: Assess whether the microbiome community as a whole mediates the pathway, focusing on Type I error rate under null settings.
-- **Methods Evaluated**: `CMM`, `LDM-med`, `MedTest`, `MODIMA`, and `PERMANOVA-med`.
+- **Methods Evaluated**: `CAMRA-HDMT`, `CAMRA-SBMH`, `CMM`, `LDM-med`, `MedTest`, `MODIMA`, and `PERMANOVA-med`.
 
 ## ⚙️ Simulation Settings
 
@@ -49,8 +49,8 @@ kk <- runone_simulation(
   num1_A = 10, 
   num1_B = 10, 
   num2 = 7,
-  beta_treat = log(5), 
-  beta_outcome = 1, 
+  beta_treat = log(5), # change to log(20) for stress-test simulation
+  beta_outcome = 1,    # change to 5 for stress-test simulation
   d = 0.5,
   template = "GALAXYMicrobLiver_study",
   template_dir = ".",

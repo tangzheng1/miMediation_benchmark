@@ -1,13 +1,16 @@
 load("taxon_level_summary.RData") #from simulations/results/
 load("taxon_level_long.RData")
+load("taxon_level_summary_p800.RData")
+load("taxon_level_long_p800.RData")
 library(tidyverse)
 library(ggplot2)
 library(patchwork)
 
 my_colors <- c(
-  "CAMRA"      = "red",  
-  "LDM-med"  = "blue",  
-  "microHIMA"    = "grey60",  
+  "CAMRA-HDMT" = "red",
+  "CAMRA-SBMH" = "brown",
+  "LDM-med"    = "blue",  
+  "microHIMA"  = "grey60",  
   "MarZIC"     = "green",  
   "multimedia" = "yellow", 
   "CRAmed"     = "orange",  
@@ -58,13 +61,13 @@ draw_fdr_barplot <- function(data, d_val) {
       plot.title = element_text(hjust = 0, face = "bold", size = 16), 
       strip.text = element_text(size = 12),
       legend.text = element_text(size = 14),     
-      legend.title = element_text(size = 16)     
+      legend.title = element_text(size = 14)     
     ) +
     labs(
       title = paste0("Balanced (d = ", d_val, ")"),
       x = "Number of True Mediators",
       y = "Empirical FDR",
-      fill = "Method"
+      fill = NULL
     )
 }
 
@@ -142,9 +145,9 @@ final_fig5 <- (p1 /plot_spacer()/ p2) +
               heights = c(1,0.05,1)) & 
   theme(legend.position = "bottom")
 
-###### Fig. S1 power of taxon level tests for benchmark methods ######
+###### Fig. S2 power of taxon level tests for benchmark methods ######
 
-plot_S1_data <- taxon_level_summary %>%
+plot_S2_data <- taxon_level_summary %>%
   filter(alpha == 0.05) %>%       
   filter(num2 > 0) %>%            # mediation_signal
   filter(method %in% benchmark_methods_taxon) %>%
@@ -182,41 +185,19 @@ draw_power_barplot <- function(data, d_val) {
     )
 }
 
-p1 <- draw_power_barplot(plot_S1_data, 0.5) + 
+p1 <- draw_power_barplot(plot_S2_data, 0.5) + 
   labs(title = "a. Balanced +/-")
 
-p2 <- draw_power_barplot(plot_S1_data, 0.9) + 
+p2 <- draw_power_barplot(plot_S2_data, 0.9) + 
   labs(title = "b. Dominant +")
 
-final_S1 <- (p1 /plot_spacer()/ p2) + 
+final_S2 <- (p1 /plot_spacer()/ p2) + 
   plot_layout(guides = "collect",
               heights = c(1,0.05,1)) & 
   theme(legend.position = "bottom")
 
 
-###### Fig S3 Empirical FDR of taxon-level mediation tests including CAMRA ######
-
-plot_S3_data <- taxon_level_summary %>%
-  filter(alpha == 0.05) %>%       
-  filter(num2 > 0) %>%            # mediation_signal
-  mutate(
-    num2 = as.factor(num2),       
-    n_lab = paste0("n = ", n),    
-    p_lab = paste0("p = ", p)
-  )
-
-p1 <- draw_fdr_barplot(plot_S3_data, 0.5) + 
-  labs(title = "a. Balanced +/-")
-
-p2 <- draw_fdr_barplot(plot_S3_data, 0.9) + 
-  labs(title = "b. Dominant +")
-
-final_S3 <- (p1 /plot_spacer()/ p2) + 
-  plot_layout(guides = "collect",
-              heights = c(1,0.05,1)) & 
-  theme(legend.position = "bottom")
-
-###### Fig S4 Power of taxon-level mediation tests including CAMRA ######
+###### Fig S4 Empirical FDR of taxon-level mediation tests including CAMRA ######
 
 plot_S4_data <- taxon_level_summary %>%
   filter(alpha == 0.05) %>%       
@@ -227,10 +208,10 @@ plot_S4_data <- taxon_level_summary %>%
     p_lab = paste0("p = ", p)
   )
 
-p1 <- draw_power_barplot(plot_S4_data, 0.5) + 
+p1 <- draw_fdr_barplot(plot_S4_data, 0.5) + 
   labs(title = "a. Balanced +/-")
 
-p2 <- draw_power_barplot(plot_S4_data, 0.9) + 
+p2 <- draw_fdr_barplot(plot_S4_data, 0.9) + 
   labs(title = "b. Dominant +")
 
 final_S4 <- (p1 /plot_spacer()/ p2) + 
@@ -238,6 +219,71 @@ final_S4 <- (p1 /plot_spacer()/ p2) +
               heights = c(1,0.05,1)) & 
   theme(legend.position = "bottom")
 
+###### Fig S5 Power of taxon-level mediation tests including CAMRA ######
+
+plot_S5_data <- taxon_level_summary %>%
+  filter(alpha == 0.05) %>%       
+  filter(num2 > 0) %>%            # mediation_signal
+  mutate(
+    num2 = as.factor(num2),       
+    n_lab = paste0("n = ", n),    
+    p_lab = paste0("p = ", p)
+  )
+
+p1 <- draw_power_barplot(plot_S5_data, 0.5) + 
+  labs(title = "a. Balanced +/-")
+
+p2 <- draw_power_barplot(plot_S5_data, 0.9) + 
+  labs(title = "b. Dominant +")
+
+final_S5 <- (p1 /plot_spacer()/ p2) + 
+  plot_layout(guides = "collect",
+              heights = c(1,0.05,1)) & 
+  theme(legend.position = "bottom")
+
+###### Fig S6 Empirical FDR of taxon-level mediation tests in small-$n$, large-$p$ stress-test simulations. ######
+
+plot_S6_data <- taxon_level_summary_p800 %>%
+  filter(alpha == 0.05) %>%       
+  filter(num2 > 0) %>%            # mediation_signal
+  mutate(
+    num2 = as.factor(num2),       
+    n_lab = paste0("n = ", n),    
+    p_lab = paste0("p = ", p)
+  )
+
+p1 <- draw_fdr_barplot(plot_S6_data, 0.5) + 
+  labs(title = "a. Balanced +/- ")
+
+p2 <- draw_fdr_barplot(plot_S6_data, 0.9) + 
+  labs(title = "b. Dominant +")
+
+final_S6 <- (p1 /plot_spacer()/ p2) + 
+  plot_layout(guides = "collect",
+              heights = c(1,0.01,1)) & 
+  theme(legend.position = "bottom")
+
+###### Fig S7 Power of taxon-level mediation tests in small-$n$, large-$p$ stress-test simulations. ######
+
+plot_S7_data <- taxon_level_summary_p800 %>%
+  filter(alpha == 0.05) %>%       
+  filter(num2 > 0) %>%            # mediation_signal
+  mutate(
+    num2 = as.factor(num2),       
+    n_lab = paste0("n = ", n),    
+    p_lab = paste0("p = ", p)
+  )
+
+p1 <- draw_power_barplot(plot_S7_data, 0.5) + 
+  labs(title = "a. Balanced +/-")
+
+p2 <- draw_power_barplot(plot_S7_data, 0.9) + 
+  labs(title = "b. Dominant +")
+
+final_S7 <- (p1 /plot_spacer()/ p2) + 
+  plot_layout(guides = "collect",
+              heights = c(1,0.05,1)) & 
+  theme(legend.position = "bottom")
 
 ###### Table ######
 ###### Table S3 Computation time across various dataset dimensions ######
